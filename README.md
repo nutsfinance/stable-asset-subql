@@ -1,1 +1,0 @@
-# stable-asset-subql
