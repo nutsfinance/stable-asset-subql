@@ -1,17 +1,178 @@
 type StarterEntity @entity {
-
-  id: ID! #id is a required field
-
+  id: ID! #id is a required field=
   field1: Int!
-
   field2: String #filed2 is an optional field
-
   field3: BigInt
-
   field4: Date
-
   field5: Boolean
+}
+
+type Block @entity {
+  id: ID! # block number
+  hash: String
+  number: BigInt
+  timestamp: Date
+}
+
+type Extrinsic @entity {
+  id: ID! # extrinsic hash
+  hash: String
+  block: Block
+
+  address: Account
+  method: String
+  section: String
+}
+
+type Account @entity {
+  id: ID! # user address
+  address: String
+  txCount: BigInt
+
+  # History
+  mint: [Mint] @derivedFrom(field: "address")
+  swap: [Swap] @derivedFrom(field: "address")
+  proportionRedeem: [ProportionRedeem] @derivedFrom(field: "address")
+  singleRedeem: [SingleRedeem] @derivedFrom(field: "address")
+  multiRedeem: [MultiRedeem] @derivedFrom(field: "address")
+}
 
 
+type Mint @entity {
+  id: ID! #id is a required field=
 
+  address: Account
+  poolId: Int!  # Stable asset pool id
+
+  a: Int
+  inputAmounts: [BigInt]
+  mintOutputAmount: BigInt
+  balances: [BigInt]
+  totalSupply: BigInt
+  yieldAmount: BigInt
+  feeAmount: BigInt
+  outputAmount: BigInt
+
+  block: Block
+  extrinsic: Extrinsic
+  timestamp: Date
+}
+
+type Swap @entity {
+  id: ID! #id is a required field=
+
+  address: Account
+  poolId: Int!  # Stable asset pool id
+
+  a: Int
+  inputAsset: Int
+  outputAsset: Int
+  inputAmount: BigInt
+  minOutputAmount: BigInt
+  balances: [BigInt]
+  totalSupply: BigInt
+  yieldAmount: BigInt
+  feeAmount: BigInt
+  outputAmount: BigInt
+
+  block: Block
+  extrinsic: Extrinsic
+  timestamp: Date
+}
+
+type ProportionRedeem @entity {
+  id: ID! #id is a required field=
+
+  address: Account
+  poolId: Int!  # Stable asset pool id
+
+  a: Int
+  inputAmount: BigInt
+  mintOutputAmounts: [BigInt]
+  balances: [BigInt]
+  totalSupply: BigInt
+  yieldAmount: BigInt
+  feeAmount: BigInt
+  outputAmounts: [BigInt]
+
+  block: Block
+  extrinsic: Extrinsic
+  timestamp: Date
+}
+
+type SingleRedeem @entity {
+  id: ID! #id is a required field=
+
+  address: Account
+  poolId: Int!  # Stable asset pool id
+
+  a: Int
+  inputAmount: BigInt
+  outputAsset: Int
+  mintOutputAmount: BigInt
+  balances: [BigInt]
+  totalSupply: BigInt
+  yieldAmount: BigInt
+  feeAmount: BigInt
+  outputAmount: BigInt
+
+  block: Block
+  extrinsic: Extrinsic
+  timestamp: Date
+}
+
+type MultiRedeem @entity {
+  id: ID! #id is a required field=
+
+  address: Account
+  poolId: Int!  # Stable asset pool id
+
+  a: Int
+  outputAmounts: [BigInt]
+  maxInputAmount: BigInt
+  balances: [BigInt]
+  totalSupply: BigInt
+  yieldAmount: BigInt
+  feeAmount: BigInt
+  outputAmount: BigInt
+
+  block: Block
+  extrinsic: Extrinsic
+  timestamp: Date  
+}
+
+enum Operation {
+  MINT,
+  SWAP,
+  PROPORTION_REDEEM,
+  SINGLE_REDEEM,
+  MULTI_REDEEM
+}
+
+type YieldCollection @entity {
+  id: ID! #id is a required field=
+
+  address: Account
+  poolId: Int!  # Stable asset pool id
+
+  operation: Operation
+  amount: BigInt
+
+  block: Block
+  extrinsic: Extrinsic
+  timestamp: Date  
+}
+
+type FeeCollection @entity {
+  id: ID! #id is a required field=
+
+  address: Account
+  poolId: Int!  # Stable asset pool id
+
+  operation: Operation
+  amount: BigInt
+
+  block: Block
+  extrinsic: Extrinsic
+  timestamp: Date
 }
