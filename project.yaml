@@ -27,3 +27,8 @@ dataSources:
           filter:
             module: stableAsset
             method: TokenSwapped
+        - handler: handleProportionRedeem
+          kind: substrate/EventHandler
+          filter:
+            module: stableAsset
+            method: RedeemedProportion

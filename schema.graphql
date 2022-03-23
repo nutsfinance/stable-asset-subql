@@ -88,7 +88,7 @@ type ProportionRedeem @entity {
 
   a: Int
   inputAmount: BigInt
-  mintOutputAmounts: String # Use comma separated values because Subquery does not work well with [bigint]
+  minOutputAmounts: String # Use comma separated values because Subquery does not work well with [bigint]
   balances: String # Use comma separated values because Subquery does not work well with [bigint]
   totalSupply: BigInt
   yieldAmount: BigInt
@@ -109,7 +109,7 @@ type SingleRedeem @entity {
   a: Int
   inputAmount: BigInt
   outputAsset: Int
-  mintOutputAmount: BigInt
+  minOutputAmount: BigInt
   balances: String # Use comma separated values because Subquery does not work well with [bigint]
   totalSupply: BigInt
   yieldAmount: BigInt
