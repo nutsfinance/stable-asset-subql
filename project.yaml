@@ -32,3 +32,13 @@ dataSources:
           filter:
             module: stableAsset
             method: RedeemedProportion
+        - handler: handleSingleRedeem
+          kind: substrate/EventHandler
+          filter:
+            module: stableAsset
+            method: RedeemedSingle
+        - handler: handleMultiRedeem
+          kind: substrate/EventHandler
+          filter:
+            module: stableAsset
+            method: RedeemedMulti

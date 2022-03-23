@@ -1,45 +1,47 @@
 import { SubstrateEvent } from "@subql/types";
 import { AccountId, Balance } from "@acala-network/types/interfaces";
 import { ensureBlock, ensureExtrinsic } from ".";
-import { getAccount, getProportionRedeem } from "../utils";
+import { getAccount, getSingleRedeem } from "../utils";
 import { FeeCollection, YieldCollection, Operation } from "../types";
 
-export const proportionRedeem = async (event: SubstrateEvent) => {
-    logger.info('Proportion Redeem Events: ' + JSON.stringify(event));
-    // [redeemer, pool id, a, input amount, min_output_amounts, balances, total supply, fee amount, output amount]
-    const [redeemer, poolId, a, inputAmount, minOutputAmounts, balances, totalSupply, feeAmount, outputAmounts] = event.event.data as unknown as [AccountId, number, number, Balance, Balance[], Balance[], Balance, Balance, Balance[]];
+export const singleRedeem = async (event: SubstrateEvent) => {
+    logger.info('Single Redem Events: ' + JSON.stringify(event));
+    // [redeemer, pool id, a, input amount, output_asset, min_output_amount, balances, total supply, fee amount, output amount]
+    const [redeemer, poolId, a, inputAmount, outputAsset, minOutputAmount, balances, totalSupply, feeAmount, outputAmount] = event.event.data as unknown as [AccountId, number, number, Balance, string, Balance, Balance[], Balance, Balance, Balance];
     const blockData = await ensureBlock(event);
     logger.info('redeemer: ' + redeemer.toString());
     logger.info('poolId: ' +  poolId);
     logger.info('a:' + a);
     logger.info('inputAmount: ' + inputAmount)
-    logger.info('min: ' +  minOutputAmounts)
+    logger.info('outputAsset: ' + outputAsset)
+    logger.info('min: ' +  minOutputAmount)
     logger.info('balances: ' + balances)
     logger.info('totalSupply: ' + totalSupply)
     logger.info('feeAmount: ' + feeAmount)
-    logger.info('outputAmounts:' +  outputAmounts)
+    logger.info('outputAmount:' +  outputAmount)
 
-    const proportionRedeemId = `${blockData.hash}-${event.idx.toString()}`;
-    logger.info('Redeem ID: ' + proportionRedeemId)
-    const proportionRedeem = await getProportionRedeem(proportionRedeemId);
+    const singleRedeemId = `${blockData.hash}-${event.idx.toString()}`;
+    logger.info('Redeem ID: ' + singleRedeemId)
+    const singleRedeem = await getSingleRedeem(singleRedeemId);
 
-    proportionRedeem.addressId = redeemer.toString();
-    proportionRedeem.poolId = poolId;
-    proportionRedeem.a = a;
-    proportionRedeem.inputAmount = BigInt(inputAmount.toString());
-    proportionRedeem.minOutputAmounts = minOutputAmounts.map(amount => amount.toString()).join();
-    proportionRedeem.balances = balances.map(amount => amount.toString()).join();
-    proportionRedeem.totalSupply = BigInt(totalSupply.toString());
-    proportionRedeem.feeAmount = BigInt(feeAmount.toString());
-    proportionRedeem.outputAmounts = outputAmounts.map(amount => amount.toString()).join();
+    singleRedeem.addressId = redeemer.toString();
+    singleRedeem.poolId = poolId;
+    singleRedeem.a = a;
+    singleRedeem.inputAmount = BigInt(inputAmount.toString());
+    singleRedeem.outputAsset = outputAsset;
+    singleRedeem.minOutputAmount = BigInt(minOutputAmount.toString());
+    singleRedeem.balances = balances.map(amount => amount.toString()).join();
+    singleRedeem.totalSupply = BigInt(totalSupply.toString());
+    singleRedeem.feeAmount = BigInt(feeAmount.toString());
+    singleRedeem.outputAmount = BigInt(outputAmount.toString());
 
-    proportionRedeem.blockId = blockData.id
-    proportionRedeem.timestamp = blockData.timestamp;
+    singleRedeem.blockId = blockData.id
+    singleRedeem.timestamp = blockData.timestamp;
 
     // Update extrinsic data
     if (event.extrinsic) {
 		const extrinsicData = await ensureExtrinsic(event);
-		proportionRedeem.extrinsicId = extrinsicData.id;
+		singleRedeem.extrinsicId = extrinsicData.id;
 		await getAccount(event.extrinsic.extrinsic.signer.toString());
 
 		extrinsicData.section = event.event.section;
@@ -53,18 +55,18 @@ export const proportionRedeem = async (event: SubstrateEvent) => {
     const feeEvent = event.extrinsic.events.find(event => event.event.method === 'FeeCollected');
     if (feeEvent) {
         const [,,,,,,, feeAmount] = feeEvent.event.data as unknown as [number, number, Balance[], Balance[], Balance, Balance, AccountId, Balance];
-        proportionRedeem.feeAmount += BigInt(feeAmount.toString());
+        singleRedeem.feeAmount += BigInt(feeAmount.toString());
     }
-    if (proportionRedeem.feeAmount > 0) {
-        const feeId = `${proportionRedeemId}-fee`;
+    if (singleRedeem.feeAmount > 0) {
+        const feeId = `${singleRedeemId}-fee`;
         const feeCollection = new FeeCollection(feeId);
         feeCollection.addressId = redeemer.toString();
         feeCollection.poolId = poolId;
         feeCollection.operation = Operation.PROPORTION_REDEEM;
-        feeCollection.amount = proportionRedeem.feeAmount;
+        feeCollection.amount = singleRedeem.feeAmount;
         feeCollection.blockId = blockData.id;
         feeCollection.timestamp = blockData.timestamp;
-        feeCollection.extrinsicId = proportionRedeem.extrinsicId;
+        feeCollection.extrinsicId = singleRedeem.extrinsicId;
 
         await feeCollection.save();
     }
@@ -73,9 +75,9 @@ export const proportionRedeem = async (event: SubstrateEvent) => {
     const yieldEvent = event.extrinsic.events.find(event => event.event.method === 'YieldCollected');
     if (yieldEvent) {
         const [,,,,, yieldAmount] = yieldEvent.event.data as unknown as [number, number, Balance, Balance, AccountId, Balance];
-        proportionRedeem.yieldAmount = BigInt(yieldAmount.toString());
+        singleRedeem.yieldAmount = BigInt(yieldAmount.toString());
 
-        const yieldId = `${proportionRedeemId}-yield`;
+        const yieldId = `${singleRedeemId}-yield`;
         const yieldCollection = new YieldCollection(yieldId);
         yieldCollection.addressId = redeemer.toString();
         yieldCollection.poolId = poolId;
@@ -83,10 +85,10 @@ export const proportionRedeem = async (event: SubstrateEvent) => {
         yieldCollection.amount = BigInt(yieldAmount.toString());
         yieldCollection.blockId = blockData.id;
         yieldCollection.timestamp = blockData.timestamp;
-        yieldCollection.extrinsicId = proportionRedeem.extrinsicId;
+        yieldCollection.extrinsicId = singleRedeem.extrinsicId;
 
         await yieldCollection.save();
     }
 
-	await proportionRedeem.save();
+	await singleRedeem.save();
 }

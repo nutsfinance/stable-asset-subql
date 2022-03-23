@@ -5,9 +5,20 @@ import { getAccount, getSwap } from "../utils";
 import { FeeCollection, YieldCollection, Operation } from "../types";
 
 export const swap = async (event: SubstrateEvent) => {
+    logger.info('Swap Events: ' + JSON.stringify(event));
     // [swapper, pool id, a, input asset, output asset, input amount, min_output_amount, balances, total supply, output amount]
-    const [swapper, poolId, a, intputAsset, outputAsset, inputAmount, minOutputAmount, balances, totalSupply, outputAmount] = event.event.data as unknown as [AccountId, number, number, number, number, Balance, Balance, Balance[], Balance, Balance];
+    const [swapper, poolId, a, intputAsset, outputAsset, inputAmount, minOutputAmount, balances, totalSupply, outputAmount] = event.event.data as unknown as [AccountId, number, number, string, string, Balance, Balance, Balance[], Balance, Balance];
     const blockData = await ensureBlock(event);
+    logger.info('swapper: ' + swapper.toString());
+    logger.info('poolId: ' +  poolId);
+    logger.info('a:' + a);
+    logger.info('inputAsset:' + intputAsset)
+    logger.info('outputAsset: ' + outputAsset)
+    logger.info('inputAmount: ' + inputAmount)
+    logger.info('min: ' +  minOutputAmount)
+    logger.info('balances: ' + balances)
+    logger.info('totalSupply: ' + totalSupply)
+    logger.info('outputAmount:' +  outputAmount)
 
     const swapId = `${blockData.hash}-${event.idx.toString()}`;
     logger.info('Swap ID: ' + swapId)

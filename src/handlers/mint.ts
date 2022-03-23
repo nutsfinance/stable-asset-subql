@@ -5,7 +5,7 @@ import { getAccount, getMint } from "../utils";
 import { FeeCollection, YieldCollection, Operation } from "../types";
 
 export const mint = async (event: SubstrateEvent) => {
-    // logger.info('Events: ' + JSON.stringify(event));
+    logger.info('Mint Events: ' + JSON.stringify(event));
     // logger.info('Event index: ' + event.idx)
     // logger.info(JSON.stringify(event.extrinsic.events.map(event => event.event.method)))
     // [minter, pool id, a, input amounts, min output, balances, total supply, fee amount, output amount]
