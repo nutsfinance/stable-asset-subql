@@ -22,3 +22,8 @@ dataSources:
           filter:
             module: stableAsset
             method: Minted
+        - handler: handleSwap
+          kind: substrate/EventHandler
+          filter:
+            module: stableAsset
+            method: TokenSwapped

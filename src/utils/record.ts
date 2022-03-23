@@ -1,5 +1,5 @@
 import {
-	Account, Block, Extrinsic, Mint
+	Account, Block, Extrinsic, Mint, Swap, ProportionRedeem, SingleRedeem, MultiRedeem
 } from "../types";
 
 export const getAccount = async (address: string) => {
@@ -49,6 +49,60 @@ export const getMint = async (id: string) => {
 
 	if (!record) {
 		const newRecord = new Mint(id);
+        newRecord.feeAmount = BigInt(0);
+        newRecord.yieldAmount = BigInt(0);
+		return newRecord;
+	} else {
+		return record;
+	}
+};
+
+export const getSwap = async (id: string) => {
+	const record = await Swap.get(id);
+
+	if (!record) {
+		const newRecord = new Swap(id);
+        newRecord.feeAmount = BigInt(0);
+        newRecord.yieldAmount = BigInt(0);
+		return newRecord;
+	} else {
+		return record;
+	}
+};
+
+export const getProportionRedeem = async (id: string) => {
+	const record = await ProportionRedeem.get(id);
+
+	if (!record) {
+		const newRecord = new ProportionRedeem(id);
+        newRecord.feeAmount = BigInt(0);
+        newRecord.yieldAmount = BigInt(0);
+		return newRecord;
+	} else {
+		return record;
+	}
+};
+
+export const getSingleRedeem = async (id: string) => {
+	const record = await SingleRedeem.get(id);
+
+	if (!record) {
+		const newRecord = new SingleRedeem(id);
+        newRecord.feeAmount = BigInt(0);
+        newRecord.yieldAmount = BigInt(0);
+		return newRecord;
+	} else {
+		return record;
+	}
+};
+
+export const getMultiRedeem = async (id: string) => {
+	const record = await MultiRedeem.get(id);
+
+	if (!record) {
+		const newRecord = new MultiRedeem(id);
+        newRecord.feeAmount = BigInt(0);
+        newRecord.yieldAmount = BigInt(0);
 		return newRecord;
 	} else {
 		return record;
