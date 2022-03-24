@@ -1,5 +1,5 @@
 import {
-	Account, Block, Extrinsic, Mint, Swap, ProportionRedeem, SingleRedeem, MultiRedeem
+	Account, Block, Extrinsic, Mint, Swap, ProportionRedeem, SingleRedeem, MultiRedeem, HourlyData, DailyData
 } from "../types";
 
 export const getAccount = async (address: string) => {
@@ -103,6 +103,34 @@ export const getMultiRedeem = async (id: string) => {
 		const newRecord = new MultiRedeem(id);
         newRecord.feeAmount = BigInt(0);
         newRecord.yieldAmount = BigInt(0);
+		return newRecord;
+	} else {
+		return record;
+	}
+};
+
+export const getHourlyData = async (id: string) => {
+	const record = await HourlyData.get(id);
+
+	if (!record) {
+		const newRecord = new HourlyData(id);
+        newRecord.mintVolume = BigInt(0);
+        newRecord.swapVolume = BigInt(0);
+        newRecord.redeemVolume = BigInt(0);
+		return newRecord;
+	} else {
+		return record;
+	}
+};
+
+export const getDailyData = async (id: string) => {
+	const record = await DailyData.get(id);
+
+	if (!record) {
+		const newRecord = new DailyData(id);
+        newRecord.mintVolume = BigInt(0);
+        newRecord.swapVolume = BigInt(0);
+        newRecord.redeemVolume = BigInt(0);
 		return newRecord;
 	} else {
 		return record;

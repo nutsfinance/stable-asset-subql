@@ -1,7 +1,7 @@
 import { SubstrateEvent } from "@subql/types";
 import { AccountId, Balance } from "@acala-network/types/interfaces";
 import { ensureBlock, ensureExtrinsic } from ".";
-import { getAccount, getSwap } from "../utils";
+import { getAccount, getSwap, getHourlyData, getDailyData, getStartOfHour, getStartOfDay } from "../utils";
 import { FeeCollection, YieldCollection, Operation } from "../types";
 
 export const swap = async (event: SubstrateEvent) => {
@@ -19,6 +19,8 @@ export const swap = async (event: SubstrateEvent) => {
     logger.info('balances: ' + balances)
     logger.info('totalSupply: ' + totalSupply)
     logger.info('outputAmount:' +  outputAmount)
+    const hourTime = getStartOfHour(blockData.timestamp);
+	const dailyTime = getStartOfDay(blockData.timestamp);
 
     const swapId = `${blockData.hash}-${event.idx.toString()}`;
     logger.info('Swap ID: ' + swapId)
@@ -87,6 +89,30 @@ export const swap = async (event: SubstrateEvent) => {
 
         await yieldCollection.save();
     }
+
+    // Update hourly data
+    const hourlyDataId = `${poolId}-${hourTime.getTime()}`;
+    const hourlyData = await getHourlyData(hourlyDataId);
+    hourlyData.poolId = poolId;
+    hourlyData.swapTx += 1;
+    hourlyData.totalTx += 1;
+    hourlyData.swapVolume = hourlyData.swapVolume + swap.inputAmount;
+    hourlyData.totalVolume = hourlyData.totalVolume + swap.inputAmount;
+    hourlyData.feeVolume = hourlyData.feeVolume + swap.feeAmount;
+    hourlyData.yieldVolume = hourlyData.yieldVolume + swap.yieldAmount;
+    await hourlyData.save();
+
+    // Update daily data
+    const dailyDataId = `${poolId}-${dailyTime.getTime()}`;
+    const dailyData = await getDailyData(dailyDataId);
+    dailyData.poolId = poolId;
+    dailyData.swapTx += 1;
+    dailyData.totalTx += 1;
+    dailyData.redeemVolume = dailyData.redeemVolume + swap.inputAmount;
+    dailyData.totalVolume = dailyData.totalVolume + swap.inputAmount;
+    dailyData.feeVolume = dailyData.feeVolume + swap.feeAmount;
+    dailyData.yieldVolume = dailyData.yieldVolume + swap.yieldAmount;
+    await dailyData.save();
 
 	await swap.save();
 }

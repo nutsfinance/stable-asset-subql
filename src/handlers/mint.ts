@@ -1,7 +1,7 @@
 import { SubstrateEvent } from "@subql/types";
 import { AccountId, Balance } from "@acala-network/types/interfaces";
 import { ensureBlock, ensureExtrinsic } from ".";
-import { getAccount, getMint } from "../utils";
+import { getAccount, getMint, getHourlyData, getDailyData, getStartOfHour, getStartOfDay } from "../utils";
 import { FeeCollection, YieldCollection, Operation } from "../types";
 
 export const mint = async (event: SubstrateEvent) => {
@@ -20,6 +20,8 @@ export const mint = async (event: SubstrateEvent) => {
     // logger.info('feeAmount: ' +  feeAmount)
     // logger.info('outputAmount:' +  outputAmount)
     const blockData = await ensureBlock(event);
+    const hourTime = getStartOfHour(blockData.timestamp);
+	const dailyTime = getStartOfDay(blockData.timestamp);
 
     const mintId = `${blockData.hash}-${event.idx.toString()}`;
     logger.info('Mint ID: ' + mintId)
@@ -87,6 +89,30 @@ export const mint = async (event: SubstrateEvent) => {
 
         await yieldCollection.save();
     }
+
+    // Update hourly data
+    const hourlyDataId = `${poolId}-${hourTime.getTime()}`;
+    const hourlyData = await getHourlyData(hourlyDataId);
+    hourlyData.poolId = poolId;
+    hourlyData.mintTx += 1;
+    hourlyData.totalTx += 1;
+    hourlyData.mintVolume = hourlyData.mintVolume + mint.outputAmount;
+    hourlyData.totalVolume = hourlyData.totalVolume + mint.outputAmount;
+    hourlyData.feeVolume = hourlyData.feeVolume + mint.feeAmount;
+    hourlyData.yieldVolume = hourlyData.yieldVolume + mint.yieldAmount;
+    await hourlyData.save();
+
+    // Update daily data
+    const dailyDataId = `${poolId}-${dailyTime.getTime()}`;
+    const dailyData = await getDailyData(dailyDataId);
+    dailyData.poolId = poolId;
+    dailyData.mintTx += 1;
+    dailyData.totalTx += 1;
+    dailyData.mintVolume = dailyData.mintVolume + mint.outputAmount;
+    dailyData.totalVolume = dailyData.totalVolume + mint.outputAmount;
+    dailyData.feeVolume = dailyData.feeVolume + mint.feeAmount;
+    dailyData.yieldVolume = dailyData.yieldVolume + mint.yieldAmount;
+    await dailyData.save();
 
 	await mint.save();
 }

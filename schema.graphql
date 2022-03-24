@@ -176,3 +176,39 @@ type FeeCollection @entity {
   extrinsic: Extrinsic
   timestamp: Date
 }
+
+type HourlyData @entity {
+  id: ID! # poolId-timestamp
+
+  poolId: Int!
+
+  mintTx: Int
+  swapTx: Int
+  redeemTx: Int
+  totalTx: Int
+
+  mintVolume: BigInt
+  swapVolume: BigInt
+  redeemVolume: BigInt
+  totalVolume: BigInt
+  feeVolume: BigInt
+  yieldVolume: BigInt
+}
+
+type DailyData @entity {
+  id: ID! # poolId-timestamp
+
+  poolId: Int!
+
+  mintTx: Int
+  swapTx: Int
+  redeemTx: Int
+  totalTx: Int
+
+  mintVolume: BigInt
+  swapVolume: BigInt
+  redeemVolume: BigInt
+  totalVolume: BigInt
+  feeVolume: BigInt
+  yieldVolume: BigInt
+}
