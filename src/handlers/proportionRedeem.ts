@@ -1,7 +1,7 @@
 import { SubstrateEvent } from "@subql/types";
 import { AccountId, Balance } from "@acala-network/types/interfaces";
 import { ensureBlock, ensureExtrinsic } from ".";
-import { getAccount, getProportionRedeem } from "../utils";
+import { getAccount, getProportionRedeem, getHourlyData, getDailyData, getStartOfHour, getStartOfDay } from "../utils";
 import { FeeCollection, YieldCollection, Operation } from "../types";
 
 export const proportionRedeem = async (event: SubstrateEvent) => {
@@ -18,6 +18,8 @@ export const proportionRedeem = async (event: SubstrateEvent) => {
     logger.info('totalSupply: ' + totalSupply)
     logger.info('feeAmount: ' + feeAmount)
     logger.info('outputAmounts:' +  outputAmounts)
+    const hourTime = getStartOfHour(blockData.timestamp);
+	const dailyTime = getStartOfDay(blockData.timestamp);
 
     const proportionRedeemId = `${blockData.hash}-${event.idx.toString()}`;
     logger.info('Redeem ID: ' + proportionRedeemId)
@@ -56,8 +58,7 @@ export const proportionRedeem = async (event: SubstrateEvent) => {
         proportionRedeem.feeAmount += BigInt(feeAmount.toString());
     }
     if (proportionRedeem.feeAmount > 0) {
-        const feeId = `${proportionRedeemId}-fee`;
-        const feeCollection = new FeeCollection(feeId);
+        const feeCollection = new FeeCollection(proportionRedeemId);
         feeCollection.addressId = redeemer.toString();
         feeCollection.poolId = poolId;
         feeCollection.operation = Operation.PROPORTION_REDEEM;
@@ -75,8 +76,7 @@ export const proportionRedeem = async (event: SubstrateEvent) => {
         const [,,,,, yieldAmount] = yieldEvent.event.data as unknown as [number, number, Balance, Balance, AccountId, Balance];
         proportionRedeem.yieldAmount = BigInt(yieldAmount.toString());
 
-        const yieldId = `${proportionRedeemId}-yield`;
-        const yieldCollection = new YieldCollection(yieldId);
+        const yieldCollection = new YieldCollection(proportionRedeemId);
         yieldCollection.addressId = redeemer.toString();
         yieldCollection.poolId = poolId;
         yieldCollection.operation = Operation.PROPORTION_REDEEM;
@@ -87,6 +87,30 @@ export const proportionRedeem = async (event: SubstrateEvent) => {
 
         await yieldCollection.save();
     }
+
+    // Update hourly data
+    const hourlyDataId = `${poolId}-${hourTime.getTime()}`;
+    const hourlyData = await getHourlyData(hourlyDataId);
+    hourlyData.poolId = poolId;
+    hourlyData.redeemTx += 1;
+    hourlyData.totalTx += 1;
+    hourlyData.redeemVolume = hourlyData.redeemVolume + proportionRedeem.inputAmount;
+    hourlyData.totalVolume = hourlyData.totalVolume + proportionRedeem.inputAmount;
+    hourlyData.feeVolume = hourlyData.feeVolume + proportionRedeem.feeAmount;
+    hourlyData.yieldVolume = hourlyData.yieldVolume + proportionRedeem.yieldAmount;
+    await hourlyData.save();
+
+    // Update daily data
+    const dailyDataId = `${poolId}-${dailyTime.getTime()}`;
+    const dailyData = await getDailyData(dailyDataId);
+    dailyData.poolId = poolId;
+    dailyData.redeemTx += 1;
+    dailyData.totalTx += 1;
+    dailyData.redeemVolume = dailyData.redeemVolume + proportionRedeem.inputAmount;
+    dailyData.totalVolume = dailyData.totalVolume + proportionRedeem.inputAmount;
+    dailyData.feeVolume = dailyData.feeVolume + proportionRedeem.feeAmount;
+    dailyData.yieldVolume = dailyData.yieldVolume + proportionRedeem.yieldAmount;
+    await dailyData.save();
 
 	await proportionRedeem.save();
 }
