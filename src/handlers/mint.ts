@@ -58,8 +58,7 @@ export const mint = async (event: SubstrateEvent) => {
         mint.feeAmount += BigInt(feeAmount.toString());
     }
     if (mint.feeAmount > 0) {
-        const feeId = `${mintId}-fee`;
-        const feeCollection = new FeeCollection(feeId);
+        const feeCollection = new FeeCollection(mintId);
         feeCollection.addressId = minter.toString();
         feeCollection.poolId = poolId;
         feeCollection.operation = Operation.MINT;
@@ -77,8 +76,7 @@ export const mint = async (event: SubstrateEvent) => {
         const [,,,,, yieldAmount] = yieldEvent.event.data as unknown as [number, number, Balance, Balance, AccountId, Balance];
         mint.yieldAmount = BigInt(yieldAmount.toString());
 
-        const yieldId = `${mintId}-yield`;
-        const yieldCollection = new YieldCollection(yieldId);
+        const yieldCollection = new YieldCollection(mintId);
         yieldCollection.addressId = minter.toString();
         yieldCollection.poolId = poolId;
         yieldCollection.operation = Operation.MINT;

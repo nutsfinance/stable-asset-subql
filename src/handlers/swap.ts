@@ -58,8 +58,7 @@ export const swap = async (event: SubstrateEvent) => {
         swap.feeAmount += BigInt(feeAmount.toString());
     }
     if (swap.feeAmount > 0) {
-        const feeId = `${swapId}-fee`;
-        const feeCollection = new FeeCollection(feeId);
+        const feeCollection = new FeeCollection(swapId);
         feeCollection.addressId = swapper.toString();
         feeCollection.poolId = poolId;
         feeCollection.operation = Operation.SWAP;
@@ -77,8 +76,7 @@ export const swap = async (event: SubstrateEvent) => {
         const [,,,,, yieldAmount] = yieldEvent.event.data as unknown as [number, number, Balance, Balance, AccountId, Balance];
         swap.yieldAmount = BigInt(yieldAmount.toString());
 
-        const yieldId = `${swapId}-yield`;
-        const yieldCollection = new YieldCollection(yieldId);
+        const yieldCollection = new YieldCollection(swapId);
         yieldCollection.addressId = swapper.toString();
         yieldCollection.poolId = poolId;
         yieldCollection.operation = Operation.SWAP;

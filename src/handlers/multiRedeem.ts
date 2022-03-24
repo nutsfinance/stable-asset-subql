@@ -56,8 +56,7 @@ export const multiRedeem = async (event: SubstrateEvent) => {
         multiRedeem.feeAmount += BigInt(feeAmount.toString());
     }
     if (multiRedeem.feeAmount > 0) {
-        const feeId = `${multiRedeemId}-fee`;
-        const feeCollection = new FeeCollection(feeId);
+        const feeCollection = new FeeCollection(multiRedeemId);
         feeCollection.addressId = redeemer.toString();
         feeCollection.poolId = poolId;
         feeCollection.operation = Operation.PROPORTION_REDEEM;
@@ -75,8 +74,7 @@ export const multiRedeem = async (event: SubstrateEvent) => {
         const [,,,,, yieldAmount] = yieldEvent.event.data as unknown as [number, number, Balance, Balance, AccountId, Balance];
         multiRedeem.yieldAmount = BigInt(yieldAmount.toString());
 
-        const yieldId = `${multiRedeemId}-yield`;
-        const yieldCollection = new YieldCollection(yieldId);
+        const yieldCollection = new YieldCollection(multiRedeemId);
         yieldCollection.addressId = redeemer.toString();
         yieldCollection.poolId = poolId;
         yieldCollection.operation = Operation.PROPORTION_REDEEM;
