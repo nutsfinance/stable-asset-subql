@@ -117,6 +117,9 @@ export const getHourlyData = async (id: string) => {
         newRecord.mintVolume = BigInt(0);
         newRecord.swapVolume = BigInt(0);
         newRecord.redeemVolume = BigInt(0);
+        newRecord.totalVolume = BigInt(0);
+        newRecord.feeVolume = BigInt(0);
+        newRecord.yieldVolume = BigInt(0);
 		return newRecord;
 	} else {
 		return record;
@@ -131,6 +134,9 @@ export const getDailyData = async (id: string) => {
         newRecord.mintVolume = BigInt(0);
         newRecord.swapVolume = BigInt(0);
         newRecord.redeemVolume = BigInt(0);
+        newRecord.totalVolume = BigInt(0);
+        newRecord.feeVolume = BigInt(0);
+        newRecord.yieldVolume = BigInt(0);
 		return newRecord;
 	} else {
 		return record;
