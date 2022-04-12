@@ -188,12 +188,17 @@ type HourlyData @entity {
   redeemTx: Int
   totalTx: Int
 
+  # Summary data
   mintVolume: Float
   swapVolume: Float
   redeemVolume: Float
   totalVolume: Float
   feeVolume: Float
   yieldVolume: Float
+
+  # Point in time data
+  totalSupply: Float
+  balances: [Float]
 }
 
 type DailyData @entity {
