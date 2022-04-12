@@ -89,9 +89,7 @@ export const proportionRedeem = async (event: SubstrateEvent) => {
     }
 
     // Update hourly data
-    const hourlyDataId = `${poolId}-${hourTime.getTime()}`;
-    const hourlyData = await getHourlyData(hourlyDataId);
-    hourlyData.poolId = poolId;
+    const hourlyData = await getHourlyData(poolId, hourTime);
     hourlyData.redeemTx += 1;
     hourlyData.totalTx += 1;
     hourlyData.redeemVolume = hourlyData.redeemVolume + proportionRedeem.inputAmount;
@@ -101,9 +99,7 @@ export const proportionRedeem = async (event: SubstrateEvent) => {
     await hourlyData.save();
 
     // Update daily data
-    const dailyDataId = `${poolId}-${dailyTime.getTime()}`;
-    const dailyData = await getDailyData(dailyDataId);
-    dailyData.poolId = poolId;
+    const dailyData = await getDailyData(poolId, dailyTime);
     dailyData.redeemTx += 1;
     dailyData.totalTx += 1;
     dailyData.redeemVolume = dailyData.redeemVolume + proportionRedeem.inputAmount;

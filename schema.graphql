@@ -181,6 +181,7 @@ type HourlyData @entity {
   id: ID! # poolId-timestamp
 
   poolId: Int!
+  timestamp: Date # Start of the hour
 
   mintTx: Int
   swapTx: Int
@@ -199,6 +200,7 @@ type DailyData @entity {
   id: ID! # poolId-timestamp
 
   poolId: Int!
+  timestamp: Date # Start of the day
 
   mintTx: Int
   swapTx: Int

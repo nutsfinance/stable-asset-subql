@@ -91,9 +91,7 @@ export const mint = async (event: SubstrateEvent) => {
     }
 
     // Update hourly data
-    const hourlyDataId = `${poolId}-${hourTime.getTime()}`;
-    const hourlyData = await getHourlyData(hourlyDataId);
-    hourlyData.poolId = poolId;
+    const hourlyData = await getHourlyData(poolId, hourTime);
     hourlyData.mintTx += 1;
     hourlyData.totalTx += 1;
     hourlyData.mintVolume = hourlyData.mintVolume + mint.outputAmount;
@@ -103,9 +101,7 @@ export const mint = async (event: SubstrateEvent) => {
     await hourlyData.save();
 
     // Update daily data
-    const dailyDataId = `${poolId}-${dailyTime.getTime()}`;
-    const dailyData = await getDailyData(dailyDataId);
-    dailyData.poolId = poolId;
+    const dailyData = await getDailyData(poolId, dailyTime);
     dailyData.mintTx += 1;
     dailyData.totalTx += 1;
     dailyData.mintVolume = dailyData.mintVolume + mint.outputAmount;

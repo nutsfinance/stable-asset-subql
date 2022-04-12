@@ -109,11 +109,14 @@ export const getMultiRedeem = async (id: string) => {
 	}
 };
 
-export const getHourlyData = async (id: string) => {
+export const getHourlyData = async (poolId: number, hourTime: Date) => {
+	const id = `${poolId}-${hourTime.getTime()}`;
 	const record = await HourlyData.get(id);
 
 	if (!record) {
 		const newRecord = new HourlyData(id);
+		newRecord.poolId = poolId;
+		newRecord.timestamp = hourTime;
         newRecord.mintTx = 0;
         newRecord.swapTx = 0;
         newRecord.redeemTx = 0;
@@ -130,11 +133,14 @@ export const getHourlyData = async (id: string) => {
 	}
 };
 
-export const getDailyData = async (id: string) => {
+export const getDailyData = async (poolId: number, dailyTime: Date) => {
+	const id = `${poolId}-${dailyTime.getTime()}`;
 	const record = await DailyData.get(id);
 
 	if (!record) {
 		const newRecord = new DailyData(id);
+		newRecord.poolId = poolId;
+		newRecord.timestamp = dailyTime;
         newRecord.mintTx = 0;
         newRecord.swapTx = 0;
         newRecord.redeemTx = 0;

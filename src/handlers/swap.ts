@@ -91,9 +91,7 @@ export const swap = async (event: SubstrateEvent) => {
     }
 
     // Update hourly data
-    const hourlyDataId = `${poolId}-${hourTime.getTime()}`;
-    const hourlyData = await getHourlyData(hourlyDataId);
-    hourlyData.poolId = poolId;
+    const hourlyData = await getHourlyData(poolId, hourTime);
     hourlyData.swapTx += 1;
     hourlyData.totalTx += 1;
     hourlyData.swapVolume = hourlyData.swapVolume + swap.inputAmount;
@@ -103,9 +101,7 @@ export const swap = async (event: SubstrateEvent) => {
     await hourlyData.save();
 
     // Update daily data
-    const dailyDataId = `${poolId}-${dailyTime.getTime()}`;
-    const dailyData = await getDailyData(dailyDataId);
-    dailyData.poolId = poolId;
+    const dailyData = await getDailyData(poolId, dailyTime);
     dailyData.swapTx += 1;
     dailyData.totalTx += 1;
     dailyData.redeemVolume = dailyData.redeemVolume + swap.inputAmount;
