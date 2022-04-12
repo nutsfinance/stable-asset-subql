@@ -1,7 +1,7 @@
 import { SubstrateEvent } from "@subql/types";
 import { AccountId, Balance } from "@acala-network/types/interfaces";
 import { ensureBlock, ensureExtrinsic } from ".";
-import { getAccount, getSingleRedeem, getHourlyData, getDailyData, getStartOfHour, getStartOfDay } from "../utils";
+import { getAccount, getSingleRedeem, getHourlyData, getDailyData, getStartOfHour, getStartOfDay, getNumber, getPoolDecimals } from "../utils";
 import { FeeCollection, YieldCollection, Operation } from "../types";
 
 export const singleRedeem = async (event: SubstrateEvent) => {
@@ -90,24 +90,25 @@ export const singleRedeem = async (event: SubstrateEvent) => {
         await yieldCollection.save();
     }
 
+    const decimals = getPoolDecimals(poolId);
     // Update hourly data
     const hourlyData = await getHourlyData(poolId, hourTime);
     hourlyData.redeemTx += 1;
     hourlyData.totalTx += 1;
-    hourlyData.redeemVolume = hourlyData.redeemVolume + singleRedeem.inputAmount;
-    hourlyData.totalVolume = hourlyData.totalVolume + singleRedeem.inputAmount;
-    hourlyData.feeVolume = hourlyData.feeVolume + singleRedeem.feeAmount;
-    hourlyData.yieldVolume = hourlyData.yieldVolume + singleRedeem.yieldAmount;
+    hourlyData.redeemVolume += getNumber(singleRedeem.inputAmount, decimals);
+    hourlyData.totalVolume += getNumber(singleRedeem.inputAmount, decimals);
+    hourlyData.feeVolume += getNumber(singleRedeem.feeAmount, decimals);
+    hourlyData.yieldVolume += getNumber(singleRedeem.yieldAmount, decimals);
     await hourlyData.save();
 
     // Update daily data
     const dailyData = await getDailyData(poolId, dailyTime);
     dailyData.redeemTx += 1;
     dailyData.totalTx += 1;
-    dailyData.redeemVolume = dailyData.redeemVolume + singleRedeem.inputAmount;
-    dailyData.totalVolume = dailyData.totalVolume + singleRedeem.inputAmount;
-    dailyData.feeVolume = dailyData.feeVolume + singleRedeem.feeAmount;
-    dailyData.yieldVolume = dailyData.yieldVolume + singleRedeem.yieldAmount;
+    dailyData.redeemVolume += getNumber(singleRedeem.inputAmount, decimals);
+    dailyData.totalVolume += getNumber(singleRedeem.inputAmount, decimals);
+    dailyData.feeVolume += getNumber(singleRedeem.feeAmount, decimals);
+    dailyData.yieldVolume += getNumber(singleRedeem.yieldAmount, decimals);
     await dailyData.save();
 
 	await singleRedeem.save();

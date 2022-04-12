@@ -121,12 +121,12 @@ export const getHourlyData = async (poolId: number, hourTime: Date) => {
         newRecord.swapTx = 0;
         newRecord.redeemTx = 0;
         newRecord.totalTx = 0;
-        newRecord.mintVolume = BigInt(0);
-        newRecord.swapVolume = BigInt(0);
-        newRecord.redeemVolume = BigInt(0);
-        newRecord.totalVolume = BigInt(0);
-        newRecord.feeVolume = BigInt(0);
-        newRecord.yieldVolume = BigInt(0);
+        newRecord.mintVolume = 0;
+        newRecord.swapVolume = 0;
+        newRecord.redeemVolume = 0;
+        newRecord.totalVolume = 0;
+        newRecord.feeVolume = 0;
+        newRecord.yieldVolume = 0;
 		return newRecord;
 	} else {
 		return record;
@@ -145,12 +145,12 @@ export const getDailyData = async (poolId: number, dailyTime: Date) => {
         newRecord.swapTx = 0;
         newRecord.redeemTx = 0;
         newRecord.totalTx = 0;
-        newRecord.mintVolume = BigInt(0);
-        newRecord.swapVolume = BigInt(0);
-        newRecord.redeemVolume = BigInt(0);
-        newRecord.totalVolume = BigInt(0);
-        newRecord.feeVolume = BigInt(0);
-        newRecord.yieldVolume = BigInt(0);
+        newRecord.mintVolume = 0;
+        newRecord.swapVolume = 0;
+        newRecord.redeemVolume = 0;
+        newRecord.totalVolume = 0;
+        newRecord.feeVolume = 0;
+        newRecord.yieldVolume = 0;
 		return newRecord;
 	} else {
 		return record;

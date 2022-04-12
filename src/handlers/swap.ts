@@ -1,7 +1,7 @@
 import { SubstrateEvent } from "@subql/types";
 import { AccountId, Balance } from "@acala-network/types/interfaces";
 import { ensureBlock, ensureExtrinsic } from ".";
-import { getAccount, getSwap, getHourlyData, getDailyData, getStartOfHour, getStartOfDay } from "../utils";
+import { getAccount, getSwap, getHourlyData, getDailyData, getStartOfHour, getStartOfDay, getNumber, getPoolDecimals } from "../utils";
 import { FeeCollection, YieldCollection, Operation } from "../types";
 
 export const swap = async (event: SubstrateEvent) => {
@@ -90,24 +90,25 @@ export const swap = async (event: SubstrateEvent) => {
         await yieldCollection.save();
     }
 
+    const decimals = getPoolDecimals(poolId);
     // Update hourly data
     const hourlyData = await getHourlyData(poolId, hourTime);
     hourlyData.swapTx += 1;
     hourlyData.totalTx += 1;
-    hourlyData.swapVolume = hourlyData.swapVolume + swap.inputAmount;
-    hourlyData.totalVolume = hourlyData.totalVolume + swap.inputAmount;
-    hourlyData.feeVolume = hourlyData.feeVolume + swap.feeAmount;
-    hourlyData.yieldVolume = hourlyData.yieldVolume + swap.yieldAmount;
+    hourlyData.swapVolume += getNumber(swap.inputAmount, decimals);
+    hourlyData.totalVolume += getNumber(swap.inputAmount, decimals);
+    hourlyData.feeVolume += getNumber(swap.feeAmount, decimals);
+    hourlyData.yieldVolume += getNumber(swap.yieldAmount, decimals);
     await hourlyData.save();
 
     // Update daily data
     const dailyData = await getDailyData(poolId, dailyTime);
     dailyData.swapTx += 1;
     dailyData.totalTx += 1;
-    dailyData.redeemVolume = dailyData.redeemVolume + swap.inputAmount;
-    dailyData.totalVolume = dailyData.totalVolume + swap.inputAmount;
-    dailyData.feeVolume = dailyData.feeVolume + swap.feeAmount;
-    dailyData.yieldVolume = dailyData.yieldVolume + swap.yieldAmount;
+    dailyData.swapVolume += getNumber(swap.inputAmount, decimals);
+    dailyData.totalVolume += getNumber(swap.inputAmount, decimals);
+    dailyData.feeVolume += getNumber(swap.feeAmount, decimals);
+    dailyData.yieldVolume += getNumber(swap.yieldAmount, decimals);
     await dailyData.save();
 
 	await swap.save();
