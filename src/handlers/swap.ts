@@ -90,7 +90,7 @@ export const swap = async (event: SubstrateEvent) => {
         await yieldCollection.save();
     }
 
-    const decimals = getPoolDecimals(poolId);
+    const decimals = await getPoolDecimals(poolId);
     // Update hourly data
     const hourlyData = await getHourlyData(poolId, hourTime);
     hourlyData.swapTx += 1;

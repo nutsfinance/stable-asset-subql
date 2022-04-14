@@ -1,9 +1,7 @@
 import {
 	Account, Block, Extrinsic, Mint, Swap, ProportionRedeem, SingleRedeem, MultiRedeem, HourlyData, DailyData
 } from "../types";
-import { getNumber, getPoolDecimals } from ".";
-import { Option } from '@polkadot/types/codec';
-import { Codec } from '@polkadot/types/types';
+import { getPoolInfo } from "./pool";
 
 export const getAccount = async (address: string) => {
 	const _account = await Account.get(address);
@@ -132,16 +130,11 @@ export const getHourlyData = async (poolId: number, hourTime: Date) => {
         newRecord.yieldVolume = 0;
 
 		// New hourly record. Read point in time data
-		const poolInfo = (await api.query.stableAsset.pools(poolId) as Option<Codec>).unwrap();
-		const decimals = getPoolDecimals(poolId);
-		logger.info('1111111111111111');
-		logger.info(JSON.stringify(poolInfo));
-		logger.info('222222222222222222');
-		logger.info(JSON.stringify((poolInfo as any).totalSupply));
-		logger.info('333333333333333333');
-		logger.info(JSON.stringify((poolInfo as any).balances));
-		newRecord.totalSupply = getNumber((poolInfo as any).totalSupply, decimals);
-		newRecord.balances = (poolInfo as any).balances.map(balance => getNumber(balance, decimals));
+		const poolInfo = await getPoolInfo(poolId);
+		newRecord.totalSupply = poolInfo.totalSupply;
+		newRecord.balances = poolInfo.balances;
+		newRecord.feeBalance = poolInfo.feeBalance;
+		newRecord.yieldBalance = poolInfo.yieldBalance;
 
 		return newRecord;
 	} else {
@@ -168,6 +161,14 @@ export const getDailyData = async (poolId: number, dailyTime: Date) => {
         newRecord.totalVolume = 0;
         newRecord.feeVolume = 0;
         newRecord.yieldVolume = 0;
+
+		// New daily record. Read point in time data
+		const poolInfo = await getPoolInfo(poolId);
+		newRecord.totalSupply = poolInfo.totalSupply;
+		newRecord.balances = poolInfo.balances;
+		newRecord.feeBalance = poolInfo.feeBalance;
+		newRecord.yieldBalance = poolInfo.yieldBalance;
+
 		return newRecord;
 	} else {
 		return record;

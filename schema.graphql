@@ -199,6 +199,8 @@ type HourlyData @entity {
   # Point in time data
   totalSupply: Float
   balances: [Float]
+  yieldBalance: Float
+  feeBalance: Float
 }
 
 type DailyData @entity {
@@ -218,4 +220,10 @@ type DailyData @entity {
   totalVolume: Float
   feeVolume: Float
   yieldVolume: Float
+
+  # Point in time data
+  totalSupply: Float
+  balances: [Float]
+  yieldBalance: Float
+  feeBalance: Float
 }
