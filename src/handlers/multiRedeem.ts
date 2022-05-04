@@ -103,10 +103,10 @@ export const multiRedeem = async (event: SubstrateEvent) => {
     const dailyData = await getDailyData(poolId, dailyTime);
     dailyData.redeemTx += 1;
     dailyData.totalTx += 1;
-    dailyData.redeemVolume = getNumber(multiRedeem.inputAmount, decimals);
-    dailyData.totalVolume = getNumber(multiRedeem.inputAmount, decimals);
-    dailyData.feeVolume = getNumber(multiRedeem.feeAmount, decimals);
-    dailyData.yieldVolume = getNumber(multiRedeem.yieldAmount, decimals);
+    dailyData.redeemVolume += getNumber(multiRedeem.inputAmount, decimals);
+    dailyData.totalVolume += getNumber(multiRedeem.inputAmount, decimals);
+    dailyData.feeVolume += getNumber(multiRedeem.feeAmount, decimals);
+    dailyData.yieldVolume += getNumber(multiRedeem.yieldAmount, decimals);
     await dailyData.save();
 
 	await multiRedeem.save();

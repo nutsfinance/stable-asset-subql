@@ -105,10 +105,10 @@ export const mint = async (event: SubstrateEvent) => {
     const dailyData = await getDailyData(poolId, dailyTime);
     dailyData.mintTx += 1;
     dailyData.totalTx += 1;
-    dailyData.mintVolume = getNumber(mint.outputAmount, decimals);
-    dailyData.totalVolume = getNumber(mint.outputAmount, decimals);
-    dailyData.feeVolume = getNumber(mint.feeAmount, decimals);
-    dailyData.yieldVolume = getNumber(mint.yieldAmount, decimals);
+    dailyData.mintVolume += getNumber(mint.outputAmount, decimals);
+    dailyData.totalVolume += getNumber(mint.outputAmount, decimals);
+    dailyData.feeVolume += getNumber(mint.feeAmount, decimals);
+    dailyData.yieldVolume += getNumber(mint.yieldAmount, decimals);
     await dailyData.save();
 
 	await mint.save();
