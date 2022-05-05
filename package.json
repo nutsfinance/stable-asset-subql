@@ -34,5 +34,8 @@
   "dependencies": {
     "bignumber.js": "^9.0.2",
     "dayjs": "^1.11.0"
+  },
+  "resolutions": {
+    "ipfs-unixfs": "6.0.6"
   }
 }
