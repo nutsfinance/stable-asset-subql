@@ -9,16 +9,16 @@ export const singleRedeem = async (event: SubstrateEvent) => {
     // [redeemer, pool id, a, input amount, output_asset, min_output_amount, balances, total supply, fee amount, output amount]
     const [redeemer, poolId, a, inputAmount, outputAsset, minOutputAmount, balances, totalSupply, feeAmount, outputAmount] = event.event.data as unknown as [AccountId, number, number, Balance, string, Balance, Balance[], Balance, Balance, Balance];
     const blockData = await ensureBlock(event);
-    logger.info('redeemer: ' + redeemer.toString());
-    logger.info('poolId: ' +  poolId);
-    logger.info('a:' + a);
-    logger.info('inputAmount: ' + inputAmount)
-    logger.info('outputAsset: ' + outputAsset)
-    logger.info('min: ' +  minOutputAmount)
-    logger.info('balances: ' + balances)
-    logger.info('totalSupply: ' + totalSupply)
-    logger.info('feeAmount: ' + feeAmount)
-    logger.info('outputAmount:' +  outputAmount)
+    // logger.info('redeemer: ' + redeemer.toString());
+    // logger.info('poolId: ' +  poolId);
+    // logger.info('a:' + a);
+    // logger.info('inputAmount: ' + inputAmount)
+    // logger.info('outputAsset: ' + outputAsset)
+    // logger.info('min: ' +  minOutputAmount)
+    // logger.info('balances: ' + balances)
+    // logger.info('totalSupply: ' + totalSupply)
+    // logger.info('feeAmount: ' + feeAmount)
+    // logger.info('outputAmount:' +  outputAmount)
     const hourTime = getStartOfHour(blockData.timestamp);
 	const dailyTime = getStartOfDay(blockData.timestamp);
 

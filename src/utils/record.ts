@@ -145,6 +145,7 @@ export const getHourlyData = async (poolId: number, hourTime: Date) => {
 
 export const getDailyData = async (poolId: number, dailyTime: Date) => {
 	const id = `${poolId}-${dailyTime.getTime()}`;
+	logger.info('Daily data ID: ' + id)
 	const record = await DailyData.get(id);
 
 	if (!record) {
