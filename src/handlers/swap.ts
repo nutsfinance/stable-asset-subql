@@ -111,8 +111,8 @@ export const swap = async (event: SubstrateEvent) => {
     dailyData.yieldVolume += getNumber(swap.yieldAmount, decimals);
     await dailyData.save();
 
-    logger.info('swap tx: ' + dailyData.swapTx + ', total tx: ' + dailyData.totalTx);
-    logger.info('swap volume: ' + dailyData.swapVolume + ", total volume: " + dailyData.totalVolume)
+    // logger.info('swap tx: ' + dailyData.swapTx + ', total tx: ' + dailyData.totalTx);
+    // logger.info('swap volume: ' + dailyData.swapVolume + ", total volume: " + dailyData.totalVolume)
 
 	await swap.save();
 }
