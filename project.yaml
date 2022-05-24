@@ -1,6 +1,6 @@
-specVersion: 1.0.0
+specVersion: 0.2.0
 name: stable-asset-subql
-version: 0.0.0
+version: 0.0.4
 description: Stable Asset
 repository: 'https://github.com/subquery/karura-subql-starter'
 schema:
@@ -13,7 +13,7 @@ network:
     file: ./dist/chaintypes.js
 dataSources:
   - kind: substrate/Runtime
-    startBlock: 1072384 # Time stable asset is first propsed
+    startBlock: 1072384 # First stable asset extrinsic in Acala
     mapping:
       file: ./dist/index.js
       handlers:
