@@ -21,8 +21,8 @@ export const getPoolInfo = async (poolId: number): Promise<PoolInfo> => {
     const totalSupply = getNumber(poolInfo.totalSupply, decimals);
     const balances = poolInfo.balances.map(balance => getNumber(balance, decimals));
 
-    const feeAccount = (await api.query.tokens.accounts(poolInfo.feeRecipient.toString(), { StableAssetPoolToken: 0 }) as Option<Codec>).toJSON() as any;
-    const yieldAccount = (await api.query.tokens.accounts(poolInfo.yieldRecipient.toString(), { StableAssetPoolToken: 0 }) as Option<Codec>).toJSON() as any;
+    const feeAccount = (await api.query.tokens.accounts(poolInfo.feeRecipient.toString(), { StableAssetPoolToken: poolId }) as Option<Codec>).toJSON() as any;
+    const yieldAccount = (await api.query.tokens.accounts(poolInfo.yieldRecipient.toString(), { StableAssetPoolToken: poolId }) as Option<Codec>).toJSON() as any;
     const feeBalance = getNumber(feeAccount.free, decimals);
     const yieldBalance = getNumber(yieldAccount.free, decimals);
 
