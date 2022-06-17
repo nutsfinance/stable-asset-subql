@@ -27,6 +27,8 @@ export const mint = async (event: SubstrateEvent) => {
     logger.info('Mint ID: ' + mintId)
     const mint = await getMint(mintId);
 
+    // Ensure minter is in database
+    await getAccount(minter.toString());
     mint.addressId = minter.toString();
     mint.poolId = poolId;
     mint.a = a;

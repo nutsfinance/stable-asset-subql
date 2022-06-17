@@ -25,6 +25,8 @@ export const proportionRedeem = async (event: SubstrateEvent) => {
     logger.info('Redeem ID: ' + proportionRedeemId)
     const proportionRedeem = await getProportionRedeem(proportionRedeemId);
 
+    // Ensure redeemer is in database
+    await getAccount(redeemer.toString());
     proportionRedeem.addressId = redeemer.toString();
     proportionRedeem.poolId = poolId;
     proportionRedeem.a = a;
