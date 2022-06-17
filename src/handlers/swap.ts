@@ -26,6 +26,8 @@ export const swap = async (event: SubstrateEvent) => {
     logger.info('Swap ID: ' + swapId)
     const swap = await getSwap(swapId);
 
+    // Ensure swapper is in database
+    await getAccount(swapper.toString());
     swap.addressId = swapper.toString();
     swap.poolId = poolId;
     swap.a = a;

@@ -26,6 +26,8 @@ export const singleRedeem = async (event: SubstrateEvent) => {
     logger.info('Redeem ID: ' + singleRedeemId)
     const singleRedeem = await getSingleRedeem(singleRedeemId);
 
+    // Ensure redeemer is in database
+    await getAccount(redeemer.toString());
     singleRedeem.addressId = redeemer.toString();
     singleRedeem.poolId = poolId;
     singleRedeem.a = a;
