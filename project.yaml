@@ -4,10 +4,10 @@ version: 0.0.5
 runner:
   node:
     name: '@subql/node'
-    version: latest
+    version: *
   query:
     name: '@subql/query'
-    version: latest
+    version: *
 description: 'Stable Asset Protocol'
 repository: https://github.com/nutsfinance/stable-asset-subql
 schema:
