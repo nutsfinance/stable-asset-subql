@@ -1,13 +1,6 @@
 specVersion: 1.0.0
 name: stable-asset-subql
 version: 0.0.5
-runner:
-  node:
-    name: '@subql/node'
-    version: *
-  query:
-    name: '@subql/query'
-    version: *
 description: 'Stable Asset Protocol'
 repository: https://github.com/nutsfinance/stable-asset-subql
 schema:
