@@ -1,15 +1,8 @@
-specVersion: 1.0.0
+specVersion: 0.2.0
 name: stable-asset-subql
-version: 0.0.5
-runner:
-  node:
-    name: '@subql/node'
-    version: latest
-  query:
-    name: '@subql/query'
-    version: latest
-description: 'Stable Asset Protocol'
-repository: https://github.com/nutsfinance/stable-asset-subql
+version: 0.0.4
+description: Stable Asset
+repository: 'https://github.com/subquery/karura-subql-starter'
 schema:
   file: ./schema.graphql
 network:
