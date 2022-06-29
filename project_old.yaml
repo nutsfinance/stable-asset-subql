@@ -1,26 +1,19 @@
-specVersion: 1.0.0
+specVersion: 0.2.0
 name: stable-asset-subql
-version: 0.0.5
-runner:
-  node:
-    name: '@subql/node'
-    version: '*'
-  query:
-    name: '@subql/query'
-    version: '*'
+version: 0.0.4
 description: Stable Asset
 repository: 'https://github.com/subquery/karura-subql-starter'
 schema:
   file: ./schema.graphql
 network:
-  chainId: '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c'
   endpoint: 'wss://acala-polkadot.api.onfinality.io/public-ws'
+  genesisHash: '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c'
   dictionary: 'https://api.subquery.network/sq/subquery/acala-dictionary'
   chaintypes:
     file: ./dist/chaintypes.js
 dataSources:
   - kind: substrate/Runtime
-    startBlock: 1072384
+    startBlock: 1072384 # First stable asset extrinsic in Acala
     mapping:
       file: ./dist/index.js
       handlers:
