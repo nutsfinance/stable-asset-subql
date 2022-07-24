@@ -9,7 +9,7 @@ runner:
     name: '@subql/query'
     version: '*'
 description: Stable Asset
-repository: 'https://github.com/subquery/karura-subql-starter'
+repository: 'https://github.com/nutsfinance/stable-asset-subql'
 schema:
   file: ./schema.graphql
 network:

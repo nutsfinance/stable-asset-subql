@@ -51,44 +51,44 @@ export const multiRedeem = async (event: SubstrateEvent) => {
 		extrinsicData.addressId = event.extrinsic.extrinsic.signer.toString();
 
 		await extrinsicData.save();
+
+        // Update fee data
+        const feeEvent = event.extrinsic.events.find(event => event.event.method === 'FeeCollected');
+        if (feeEvent) {
+            const [,,,,,,, feeAmount] = feeEvent.event.data as unknown as [number, number, Balance[], Balance[], Balance, Balance, AccountId, Balance];
+            multiRedeem.feeAmount += BigInt(feeAmount.toString());
+        }
+        if (multiRedeem.feeAmount > 0) {
+            const feeCollection = new FeeCollection(multiRedeemId);
+            feeCollection.addressId = redeemer.toString();
+            feeCollection.poolId = poolId;
+            feeCollection.operation = Operation.PROPORTION_REDEEM;
+            feeCollection.amount = multiRedeem.feeAmount;
+            feeCollection.blockId = blockData.id;
+            feeCollection.timestamp = blockData.timestamp;
+            feeCollection.extrinsicId = multiRedeem.extrinsicId;
+
+            await feeCollection.save();
+        }
+
+        // Update yield data
+        const yieldEvent = event.extrinsic.events.find(event => event.event.method === 'YieldCollected');
+        if (yieldEvent) {
+            const [,,,,, yieldAmount] = yieldEvent.event.data as unknown as [number, number, Balance, Balance, AccountId, Balance];
+            multiRedeem.yieldAmount = BigInt(yieldAmount.toString());
+
+            const yieldCollection = new YieldCollection(multiRedeemId);
+            yieldCollection.addressId = redeemer.toString();
+            yieldCollection.poolId = poolId;
+            yieldCollection.operation = Operation.PROPORTION_REDEEM;
+            yieldCollection.amount = BigInt(yieldAmount.toString());
+            yieldCollection.blockId = blockData.id;
+            yieldCollection.timestamp = blockData.timestamp;
+            yieldCollection.extrinsicId = multiRedeem.extrinsicId;
+
+            await yieldCollection.save();
+        }
 	}
-
-    // Update fee data
-    const feeEvent = event.extrinsic.events.find(event => event.event.method === 'FeeCollected');
-    if (feeEvent) {
-        const [,,,,,,, feeAmount] = feeEvent.event.data as unknown as [number, number, Balance[], Balance[], Balance, Balance, AccountId, Balance];
-        multiRedeem.feeAmount += BigInt(feeAmount.toString());
-    }
-    if (multiRedeem.feeAmount > 0) {
-        const feeCollection = new FeeCollection(multiRedeemId);
-        feeCollection.addressId = redeemer.toString();
-        feeCollection.poolId = poolId;
-        feeCollection.operation = Operation.PROPORTION_REDEEM;
-        feeCollection.amount = multiRedeem.feeAmount;
-        feeCollection.blockId = blockData.id;
-        feeCollection.timestamp = blockData.timestamp;
-        feeCollection.extrinsicId = multiRedeem.extrinsicId;
-
-        await feeCollection.save();
-    }
-
-    // Update yield data
-    const yieldEvent = event.extrinsic.events.find(event => event.event.method === 'YieldCollected');
-    if (yieldEvent) {
-        const [,,,,, yieldAmount] = yieldEvent.event.data as unknown as [number, number, Balance, Balance, AccountId, Balance];
-        multiRedeem.yieldAmount = BigInt(yieldAmount.toString());
-
-        const yieldCollection = new YieldCollection(multiRedeemId);
-        yieldCollection.addressId = redeemer.toString();
-        yieldCollection.poolId = poolId;
-        yieldCollection.operation = Operation.PROPORTION_REDEEM;
-        yieldCollection.amount = BigInt(yieldAmount.toString());
-        yieldCollection.blockId = blockData.id;
-        yieldCollection.timestamp = blockData.timestamp;
-        yieldCollection.extrinsicId = multiRedeem.extrinsicId;
-
-        await yieldCollection.save();
-    }
 
     const decimals = await getPoolDecimals(poolId);
     // Update hourly data

@@ -53,44 +53,44 @@ export const mint = async (event: SubstrateEvent) => {
 		extrinsicData.addressId = event.extrinsic.extrinsic.signer.toString();
 
 		await extrinsicData.save();
+
+        // Update fee data
+        const feeEvent = event.extrinsic.events.find(event => event.event.method === 'FeeCollected');
+        if (feeEvent) {
+            const [,,,,,,, feeAmount] = feeEvent.event.data as unknown as [number, number, Balance[], Balance[], Balance, Balance, AccountId, Balance];
+            mint.feeAmount += BigInt(feeAmount.toString());
+        }
+        if (mint.feeAmount > 0) {
+            const feeCollection = new FeeCollection(mintId);
+            feeCollection.addressId = minter.toString();
+            feeCollection.poolId = poolId;
+            feeCollection.operation = Operation.MINT;
+            feeCollection.amount = mint.feeAmount;
+            feeCollection.blockId = blockData.id;
+            feeCollection.timestamp = blockData.timestamp;
+            feeCollection.extrinsicId = mint.extrinsicId;
+
+            await feeCollection.save();
+        }
+
+        // Update yield data
+        const yieldEvent = event.extrinsic.events.find(event => event.event.method === 'YieldCollected');
+        if (yieldEvent) {
+            const [,,,,, yieldAmount] = yieldEvent.event.data as unknown as [number, number, Balance, Balance, AccountId, Balance];
+            mint.yieldAmount = BigInt(yieldAmount.toString());
+
+            const yieldCollection = new YieldCollection(mintId);
+            yieldCollection.addressId = minter.toString();
+            yieldCollection.poolId = poolId;
+            yieldCollection.operation = Operation.MINT;
+            yieldCollection.amount = BigInt(yieldAmount.toString());
+            yieldCollection.blockId = blockData.id;
+            yieldCollection.timestamp = blockData.timestamp;
+            yieldCollection.extrinsicId = mint.extrinsicId;
+
+            await yieldCollection.save();
+        }
 	}
-
-    // Update fee data
-    const feeEvent = event.extrinsic.events.find(event => event.event.method === 'FeeCollected');
-    if (feeEvent) {
-        const [,,,,,,, feeAmount] = feeEvent.event.data as unknown as [number, number, Balance[], Balance[], Balance, Balance, AccountId, Balance];
-        mint.feeAmount += BigInt(feeAmount.toString());
-    }
-    if (mint.feeAmount > 0) {
-        const feeCollection = new FeeCollection(mintId);
-        feeCollection.addressId = minter.toString();
-        feeCollection.poolId = poolId;
-        feeCollection.operation = Operation.MINT;
-        feeCollection.amount = mint.feeAmount;
-        feeCollection.blockId = blockData.id;
-        feeCollection.timestamp = blockData.timestamp;
-        feeCollection.extrinsicId = mint.extrinsicId;
-
-        await feeCollection.save();
-    }
-
-    // Update yield data
-    const yieldEvent = event.extrinsic.events.find(event => event.event.method === 'YieldCollected');
-    if (yieldEvent) {
-        const [,,,,, yieldAmount] = yieldEvent.event.data as unknown as [number, number, Balance, Balance, AccountId, Balance];
-        mint.yieldAmount = BigInt(yieldAmount.toString());
-
-        const yieldCollection = new YieldCollection(mintId);
-        yieldCollection.addressId = minter.toString();
-        yieldCollection.poolId = poolId;
-        yieldCollection.operation = Operation.MINT;
-        yieldCollection.amount = BigInt(yieldAmount.toString());
-        yieldCollection.blockId = blockData.id;
-        yieldCollection.timestamp = blockData.timestamp;
-        yieldCollection.extrinsicId = mint.extrinsicId;
-
-        await yieldCollection.save();
-    }
 
     const decimals = await getPoolDecimals(poolId);
     // Update hourly data
