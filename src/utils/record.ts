@@ -1,3 +1,5 @@
+import { getStakingCurrency, getTokenDecimals, getLiquidCurrency } from '@acala-network/subql-utils';
+import { FixedPointNumber } from '@acala-network/sdk-core';
 import {
 	Account, Block, Extrinsic, Mint, Swap, ProportionRedeem, SingleRedeem, MultiRedeem, HourlyData, DailyData
 } from "../types";
@@ -23,6 +25,8 @@ export const getBlock = async (id: string) => {
 		newBlock.hash = "";
 		newBlock.number = BigInt(0);
 		newBlock.timestamp = new Date();
+		newBlock.liquidExchangeRate = await getLiquidExchangeRate();
+
 		await newBlock.save();
 		return newBlock;
 	} else {
@@ -175,3 +179,35 @@ export const getDailyData = async (poolId: number, dailyTime: Date) => {
 		return record;
 	}
 };
+
+export const getTotalStaking = async (decimals: number) => {
+	const toBond = await api.query.homa.toBondPool();
+	const stakingLedgers = await api.query.homa.stakingLedgers.entries();
+	let totalInSubAccount = FixedPointNumber.ZERO;
+  
+	stakingLedgers.map(item => {
+	  const ledge = (item[1] as any).unwrapOrDefault();
+	  totalInSubAccount = totalInSubAccount.add(FixedPointNumber.fromInner(ledge.bonded.unwrap().toString(), decimals));
+	})
+  
+	const total = FixedPointNumber.fromInner(toBond.toString(), decimals).add(totalInSubAccount);
+  
+	return total;
+  }
+
+export const getLiquidExchangeRate = async () => {
+	const stakingToken = getStakingCurrency(api as any);
+	const liquidToken = getLiquidCurrency(api as any);
+	const stakingTokenDecimals = await getTokenDecimals(api  as any, stakingToken);
+	const liquidTokenDecimals = await getTokenDecimals(api as any, liquidToken);
+	const liquidTokenIssuance = await api.query.tokens.totalIssuance(liquidToken);
+
+	const totalStaking = await getTotalStaking(stakingTokenDecimals);
+	const totalLiquid = FixedPointNumber.fromInner(liquidTokenIssuance.toString(), liquidTokenDecimals);
+	const totalVoidliquid = await api.query.homa.totalVoidLiquid();
+	const totalVoidliquidFN = FixedPointNumber.fromInner(totalVoidliquid.toString(), liquidTokenDecimals);
+	const exchangeRate = totalStaking.div(totalLiquid.add(totalVoidliquidFN));
+	exchangeRate.setPrecision(18);
+
+	return BigInt(exchangeRate.toChainData());
+}

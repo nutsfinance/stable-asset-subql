@@ -12,6 +12,7 @@ type Block @entity {
   hash: String
   number: BigInt
   timestamp: Date
+  liquidExchangeRate: BigInt
 }
 
 type Extrinsic @entity {

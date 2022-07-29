@@ -33,6 +33,7 @@
     "chaintypes": "src/chaintypes.ts"
   },
   "dependencies": {
+    "@acala-network/subql-utils": "^0.1.21",
     "bignumber.js": "^9.0.2",
     "dayjs": "^1.11.0"
   },
