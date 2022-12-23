@@ -109,6 +109,8 @@ export const multiRedeem = async (event: SubstrateEvent) => {
     dailyData.totalVolume += getNumber(multiRedeem.inputAmount, decimals);
     dailyData.feeVolume += getNumber(multiRedeem.feeAmount, decimals);
     dailyData.yieldVolume += getNumber(multiRedeem.yieldAmount, decimals);
+    dailyData.feeApr = dailyData.feeVolume * 365  / dailyData.totalSupply;
+    dailyData.yieldApr = dailyData.yieldVolume * 365  / dailyData.totalSupply;
     await dailyData.save();
 
 	await multiRedeem.save();

@@ -166,6 +166,8 @@ export const getDailyData = async (poolId: number, dailyTime: Date) => {
         newRecord.totalVolume = 0;
         newRecord.feeVolume = 0;
         newRecord.yieldVolume = 0;
+		newRecord.feeApr = 0;
+        newRecord.yieldApr = 0;
 
 		// New daily record. Read point in time data
 		const poolInfo = await getPoolInfo(poolId);

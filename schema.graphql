@@ -221,6 +221,8 @@ type DailyData @entity {
   totalVolume: Float
   feeVolume: Float
   yieldVolume: Float
+  yieldApr: Float
+  feeApr: Float
 
   # Point in time data
   totalSupply: Float

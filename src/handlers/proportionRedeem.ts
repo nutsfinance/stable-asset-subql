@@ -109,6 +109,8 @@ export const proportionRedeem = async (event: SubstrateEvent) => {
     dailyData.totalVolume += getNumber(proportionRedeem.inputAmount, decimals);
     dailyData.feeVolume += getNumber(proportionRedeem.feeAmount, decimals);
     dailyData.yieldVolume += getNumber(proportionRedeem.yieldAmount, decimals);
+    dailyData.feeApr = dailyData.feeVolume * 365  / dailyData.totalSupply;
+    dailyData.yieldApr = dailyData.yieldVolume * 365  / dailyData.totalSupply;
     await dailyData.save();
 
 	await proportionRedeem.save();

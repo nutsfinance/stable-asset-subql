@@ -111,6 +111,8 @@ export const swap = async (event: SubstrateEvent) => {
     dailyData.totalVolume += getNumber(swap.inputAmount, decimals);
     dailyData.feeVolume += getNumber(swap.feeAmount, decimals);
     dailyData.yieldVolume += getNumber(swap.yieldAmount, decimals);
+    dailyData.feeApr = dailyData.feeVolume * 365  / dailyData.totalSupply;
+    dailyData.yieldApr = dailyData.yieldVolume * 365  / dailyData.totalSupply;
     await dailyData.save();
 
     // logger.info('swap tx: ' + dailyData.swapTx + ', total tx: ' + dailyData.totalTx);

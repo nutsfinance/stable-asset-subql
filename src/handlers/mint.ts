@@ -111,6 +111,8 @@ export const mint = async (event: SubstrateEvent) => {
     dailyData.totalVolume += getNumber(mint.outputAmount, decimals);
     dailyData.feeVolume += getNumber(mint.feeAmount, decimals);
     dailyData.yieldVolume += getNumber(mint.yieldAmount, decimals);
+    dailyData.feeApr = dailyData.feeVolume * 365  / dailyData.totalSupply;
+    dailyData.yieldApr = dailyData.yieldVolume * 365  / dailyData.totalSupply;
     await dailyData.save();
 
 	await mint.save();
