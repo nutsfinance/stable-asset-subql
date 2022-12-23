@@ -1,0 +1,232 @@
+type StarterEntity @entity {
+  id: ID! #id is a required field=
+  field1: Int!
+  field2: String #filed2 is an optional field
+  field3: BigInt
+  field4: Date
+  field5: Boolean
+}
+
+type Block @entity {
+  id: ID! # block number
+  hash: String
+  number: BigInt
+  timestamp: Date
+  liquidExchangeRate: BigInt
+}
+
+type Extrinsic @entity {
+  id: ID! # extrinsic hash
+  hash: String
+  block: Block
+
+  address: Account
+  method: String
+  section: String
+}
+
+type Account @entity {
+  id: ID! # user address
+  address: String
+  txCount: BigInt
+
+  # History
+  mint: [Mint] @derivedFrom(field: "address")
+  swap: [Swap] @derivedFrom(field: "address")
+  proportionRedeem: [ProportionRedeem] @derivedFrom(field: "address")
+  singleRedeem: [SingleRedeem] @derivedFrom(field: "address")
+  multiRedeem: [MultiRedeem] @derivedFrom(field: "address")
+}
+
+
+type Mint @entity {
+  id: ID! #id is a required field=
+
+  address: Account
+  poolId: Int!  # Stable asset pool id
+
+  a: Int
+  inputAmounts: String # Use comma separated values because Subquery does not work well with [bigint]
+  mintOutputAmount: BigInt
+  balances: String # Use comma separated values because Subquery does not work well with [bigint]
+  totalSupply: BigInt
+  yieldAmount: BigInt
+  feeAmount: BigInt
+  outputAmount: BigInt
+
+  block: Block
+  extrinsic: Extrinsic
+  timestamp: Date
+}
+
+type Swap @entity {
+  id: ID! #id is a required field=
+
+  address: Account
+  poolId: Int!  # Stable asset pool id
+
+  a: Int
+  inputAsset: String
+  outputAsset: String
+  inputAmount: BigInt
+  minOutputAmount: BigInt
+  balances: String # Use comma separated values because Subquery does not work well with [bigint]
+  totalSupply: BigInt
+  yieldAmount: BigInt
+  feeAmount: BigInt
+  outputAmount: BigInt
+
+  block: Block
+  extrinsic: Extrinsic
+  timestamp: Date
+}
+
+type ProportionRedeem @entity {
+  id: ID! #id is a required field=
+
+  address: Account
+  poolId: Int!  # Stable asset pool id
+
+  a: Int
+  inputAmount: BigInt
+  minOutputAmounts: String # Use comma separated values because Subquery does not work well with [bigint]
+  balances: String # Use comma separated values because Subquery does not work well with [bigint]
+  totalSupply: BigInt
+  yieldAmount: BigInt
+  feeAmount: BigInt
+  outputAmounts: String # Use comma separated values because Subquery does not work well with [bigint]
+
+  block: Block
+  extrinsic: Extrinsic
+  timestamp: Date
+}
+
+type SingleRedeem @entity {
+  id: ID! #id is a required field=
+
+  address: Account
+  poolId: Int!  # Stable asset pool id
+
+  a: Int
+  inputAmount: BigInt
+  outputAsset: String
+  minOutputAmount: BigInt
+  balances: String # Use comma separated values because Subquery does not work well with [bigint]
+  totalSupply: BigInt
+  yieldAmount: BigInt
+  feeAmount: BigInt
+  outputAmount: BigInt
+
+  block: Block
+  extrinsic: Extrinsic
+  timestamp: Date
+}
+
+type MultiRedeem @entity {
+  id: ID! #id is a required field=
+
+  address: Account
+  poolId: Int!  # Stable asset pool id
+
+  a: Int
+  outputAmounts: String # Use comma separated values because Subquery does not work well with [bigint]
+  maxInputAmount: BigInt
+  balances: String # Use comma separated values because Subquery does not work well with [bigint]
+  totalSupply: BigInt
+  yieldAmount: BigInt
+  feeAmount: BigInt
+  inputAmount: BigInt
+
+  block: Block
+  extrinsic: Extrinsic
+  timestamp: Date  
+}
+
+enum Operation {
+  MINT,
+  SWAP,
+  PROPORTION_REDEEM,
+  SINGLE_REDEEM,
+  MULTI_REDEEM
+}
+
+type YieldCollection @entity {
+  id: ID! #id is a required field=
+
+  address: Account
+  poolId: Int!  # Stable asset pool id
+
+  operation: Operation
+  amount: BigInt
+
+  block: Block
+  extrinsic: Extrinsic
+  timestamp: Date  
+}
+
+type FeeCollection @entity {
+  id: ID! #id is a required field=
+
+  address: Account
+  poolId: Int!  # Stable asset pool id
+
+  operation: Operation
+  amount: BigInt
+
+  block: Block
+  extrinsic: Extrinsic
+  timestamp: Date
+}
+
+type HourlyData @entity {
+  id: ID! # poolId-timestamp
+
+  poolId: Int!
+  timestamp: Date # Start of the hour
+
+  mintTx: Int
+  swapTx: Int
+  redeemTx: Int
+  totalTx: Int
+
+  # Summary data
+  mintVolume: Float
+  swapVolume: Float
+  redeemVolume: Float
+  totalVolume: Float
+  feeVolume: Float
+  yieldVolume: Float
+
+  # Point in time data
+  totalSupply: Float
+  balances: [Float]
+  yieldBalance: Float
+  feeBalance: Float
+}
+
+type DailyData @entity {
+  id: ID! # poolId-timestamp
+
+  poolId: Int!
+  timestamp: Date # Start of the day
+
+  mintTx: Int
+  swapTx: Int
+  redeemTx: Int
+  totalTx: Int
+
+  mintVolume: Float
+  swapVolume: Float
+  redeemVolume: Float
+  totalVolume: Float
+  feeVolume: Float
+  yieldVolume: Float
+  yieldApr: Float
+  feeApr: Float
+
+  # Point in time data
+  totalSupply: Float
+  balances: [Float]
+  yieldBalance: Float
+  feeBalance: Float
+}

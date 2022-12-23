@@ -1,0 +1,43 @@
+{
+  "name": "stable-asset-subql",
+  "version": "0.0.4",
+  "description": "Stable Asset",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "prepack": "rm -rf dist && npm build",
+    "test": "jest",
+    "codegen": "./node_modules/.bin/subql codegen",
+    "start": "docker-compose pull & docker-compose up"
+  },
+  "homepage": "https://github.com/subquery/karura-subql-starter",
+  "repository": "github:subquery/karura-subql-starter",
+  "files": [
+    "dist",
+    "schema.graphql",
+    "project.yaml"
+  ],
+  "author": "dingshengda",
+  "license": "MIT",
+  "devDependencies": {
+    "@acala-network/sdk-core": "^4.0.2-15",
+    "@acala-network/sdk-wallet": "^4.0.2-15",
+    "@acala-network/type-definitions": "latest",
+    "@acala-network/types": "^4.0.2-15",
+    "@polkadot/api": "^7",
+    "@subql/cli": "latest",
+    "@subql/types": "latest",
+    "typescript": "^4.1.3"
+  },
+  "exports": {
+    "chaintypes": "src/chaintypes.ts"
+  },
+  "dependencies": {
+    "@acala-network/subql-utils": "^0.1.21",
+    "bignumber.js": "^9.0.2",
+    "dayjs": "^1.11.0"
+  },
+  "resolutions": {
+    "ipfs-unixfs": "6.0.6"
+  }
+}
