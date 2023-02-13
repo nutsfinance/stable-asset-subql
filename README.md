@@ -100,3 +100,8 @@ For the `subql-starter` project, you can try to query with the following code to
   }
 }
 ````
+
+#### Postgres
+```
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+```
